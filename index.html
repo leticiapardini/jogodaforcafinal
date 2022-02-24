@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1 id="titulo">Jogo da Forca</h1>
+    <pre id="boneco">
+        ____
+        | |
+        | O
+        | /|\
+        | / \
+        |
+    </pre>
+    <br>
+    <input type="button" id="btnComecar" value="Começar Jogo" onclick="começaJogo()"> 
+    </br>
+    <input type="text" id="txtLetra" maxlength = "1" disabled = true>
+    <input type="button" id="btnLetra" disabled = true value="Enviar Letra" onclick="enviarLetra()">
+    <h1 id="lblCategoria"> </h1>
+    <p id="tituloerro">Erros:</p>
+    <h1 id="lblErro"></h1>
+    <p id="tituloletras">Letras Digitadas:</p>
+    <h1 id="lblDigitadas"></h1>
+    
+    
+    <script>
+            let palavrasJson = "";
+            let letrasDigitadas = new Array();
+            let erro = 0;
+            let acerto = 0;
+            let numeroChances = 7;
+            let palavra = "";
+            let tam = "";
+
+        fetch('palavras.json')
+            .then(response => response.json())
+            .then(data => {
+                palavrasJson = data;
+            });
+
+
+        function começaJogo (){
+            document.getElementById("btnComecar").disabled = true;
+            document.getElementById("btnLetra").disabled = false;
+            document.getElementById("txtLetra").disabled = false;
+            [categoria, palavra] = buscaPalavra();
+            document.getElementById("lblCategoria").innerHTML = `Categoria: ${categoria}`;
+        }
+
+        function enviarLetra (){
+            letra = document.getElementById("txtLetra").value;
+            document.getElementById("txtLetra").value = "";
+            if(!isNaN(letra)){
+                alert("Por favor digite uma letra e não um número");
+                return;
+            }
+ 
+            if (letrasDigitadas.includes(letra)){
+                alert("Essa letra ja foi digitada");
+                return;
+            } else{
+                letrasDigitadas.push(letra);
+            }
+
+            let quantidadeAcertos =  palavra.split(letra).length -1;
+            let tam = palavra.length;
+            
+            if( quantidadeAcertos >= 1){
+                acerto = acerto + quantidadeAcertos
+                alert(`A letra ${letra} foi encontrada  ${quantidadeAcertos} vez(es)`);
+            } else{
+                erro ++;
+                alert(`A letra  ${letra} não foi encontrada na palavra`);
+                
+            }
+
+            if (erro == numeroChances) {
+                alert(`Você perdeu o jogo, a palvra era: ${palavra}`);
+                fimJogo();
+            } 
+
+            if (acerto == tam) {
+                alert(`Parabéns!! Você ganhou o jogo, acertou a palavra: ${palavra}`);
+                fimJogo();
+            }
+            document.getElementById("lblErro").innerHTML = erro;
+            document.getElementById("lblDigitadas").innerHTML = letrasDigitadas;
+        }
+
+        function fimJogo () {
+            resposta = prompt("Você deseja jogar novamente?");
+            if(resposta == "sim"){
+                jogarNovamente();
+            } else{
+                encerrarJogo();
+            }
+        }
+
+        function jogarNovamente(){
+            document.getElementById("btnComecar").disabled = false;
+            document.getElementById("btnLetra").disabled = true;
+            document.getElementById("txtLetra").disabled = true;
+            letrasDigitadas = new Array();
+            erro = 0;
+            acerto = 0;
+            palavra = "";
+        }
+
+        function encerrarJogo (){
+            document.getElementById("btnComecar").disabled = true;
+            document.getElementById("btnLetra").disabled = true;
+            document.getElementById("txtLetra").disabled = true;
+        }
+        
+        function buscaPalavra() {
+                indiceCategoria = Math.floor(Math.random() * Object.keys(palavrasJson).length);
+                categoria = Object.keys(palavrasJson)[indiceCategoria];
+
+                indicePalavra = Math.floor(Math.random() * Object.keys(palavrasJson[categoria]).length);
+                palavraSorteada = palavrasJson[categoria][indicePalavra];
+
+                return [categoria, palavraSorteada];
+            }
+               
+    </script>
+</body>
+</html>
+
+
+            
+            
+        
+
+
+            
+           
