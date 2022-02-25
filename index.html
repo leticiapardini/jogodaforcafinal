@@ -39,6 +39,7 @@
             let numeroChances = 7;
             let palavra = "";
             let tam = "";
+            let vazio = '';
 
         fetch('palavras.json')
             .then(response => response.json())
@@ -58,10 +59,17 @@
         function enviarLetra (){
             letra = document.getElementById("txtLetra").value;
             document.getElementById("txtLetra").value = "";
+
+            if(letra == vazio){
+                alert("Opa, digite alguma letra para jogar!!");
+                return;
+            }
+            
             if(!isNaN(letra)){
                 alert("Por favor digite uma letra e não um número");
                 return;
             }
+            
  
             if (letrasDigitadas.includes(letra)){
                 alert("Essa letra ja foi digitada");
